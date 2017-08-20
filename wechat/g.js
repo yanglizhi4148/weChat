@@ -6,7 +6,7 @@ var request=Promise.promisify(require('request'))//request是把bluebird进行pr
 
 var prefix='https://api.weixin.qq.com/cgi-bin/'//作为URL的前缀
 var api={//配置URL
-    accessToken:prefix + 'token？grant_type=client_credential'
+    accessToken:prefix + 'token?grant_type=client_credential'
 }
 
 function Wechat(opts){
@@ -66,9 +66,9 @@ Wechat.prototype.updateAccessToken=function(data){//更新票据
     return new Promise(function(resolve,reject){//resolve,reject判断结果是成功还是失败
         request({url:url,json:true}).then(function(response){//request是httpsget请求后的封装的库
             //从URL地址里拿到JSON数据
-            var data=response[1]//拿到数组的第二个结果
+            var data=response.body//拿到数组的第二个结果
             var now=(new Date().getTime())//拿到当前时间
-            var expires_in=now+(data.expires_in-20)*1000
+            var expires_in=now+(data.expires_in?data.expires_in:0-20)*1000
             //新的过期时间=(当前时间+票据返回的过期时间-20)*10000
             //把票据提前20s
             data.expires_in=expires_in//把票据新的有效时间赋值给data对象
