@@ -30,7 +30,7 @@ app.listen(1234)
 console.log('Listening:1234');
 
 
-//配置失败
+//初始配置
 // 'use strict'
 // var Koa=require('koa')
 // var sha1=require('sha1')
