@@ -5,8 +5,9 @@ var getRawBody=require('raw-body')
 var Wechat=require('./wechat')//是构造函数所以用大写的W
 var util=require('./util')
 
-module.exports = function (opts) {
-    // var wechat = new Wechat(opts)
+module.exports = function (opts,handler) {
+    // 我们在传入这个中间件的时候，首先初始化这个 Wechat，获取到一个实例，后面使用
+    var wechat = new Wechat(opts)
     return function*(next) {
         var that=this//把this的值赋给that
 
@@ -52,27 +53,24 @@ module.exports = function (opts) {
         console.log(message);
 
         //判断消息的类型
-        if(message.MsgType==='event'){//消息是事件
-            if(message.Event==='subscribe'){//事件时订阅事件
-                var now=new Date().getTime()//生成一个当前时间戳
+        // if(message.MsgType==='event'){//消息是事件
+        //     if(message.Event==='subscribe'){//事件时订阅事件
+        //         var now=new Date().getTime()//生成一个当前时间戳
+        //
+        //         that.status=200//设置回复的状态是200
+        //         that.type='application/xml'//设置回复的格式是XML格式
+        //         that.body=xml//设置回复的主体
+        //
+        //         return
+        //     }
+        // }
 
-                that.status=200//设置回复的状态是200
-                that.type='application/xml'//设置回复的格式是XML格式
+        //把解析好的message挂载到this上
+        this.weixin=message
 
-                var reply='<xml>'+
-                    '+<ToUserName><![CDATA['+ message.FromUserName +']]></ToUserName>'+
-                    '+<FromUserName><![CDATA['+ message.ToUserName +']]></FromUserName>'+
-                    '+<CreateTime>'+ now +'</CreateTime>'+
-                    '+<MsgType><![CDATA[text]]></MsgType>'+
-                    '+<Content><![CDATA[哈哈哈哈，可以了]]></Content>'+
-                    '+</xml>'
+        yield handler.call(this,next)
 
-                console.log(reply);
-                that.body=reply//设置回复的主体
-                return
-            }
-        }
-
+        wechat.reply.call(this)
     }
 }
 

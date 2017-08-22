@@ -2,7 +2,7 @@
 
 var Promise = require('bluebird')
 var request = Promise.promisify(require('request'))//request是把bluebird进行promise化才有的
-
+var util=require('./util')
 var prefix = 'https://api.weixin.qq.com/cgi-bin/'//作为URL的前缀
 var api = {//配置URL
     accessToken: prefix + 'token?grant_type=client_credential'
@@ -76,4 +76,16 @@ Wechat.prototype.updateAccessToken = function (data) {//更新票据
     })
 
 }
+
+Wechat.prototype.reply=function(){
+    var content=this.body//拿到回复的内容
+    var message=this.weixin
+
+    var xml=util.tpl(content,message)
+
+    this.status=200
+    this.type='application/xml'
+    this.body=xml
+}
+
 module.exports=Wechat

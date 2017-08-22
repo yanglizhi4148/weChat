@@ -2,6 +2,7 @@
 
 var xml2js=require('xml2js')
 var Promise=require('bluebird')
+var tpl=require('./tpl')
 
 exports.parseXMLAsync=function(xml){//导出parseXMLAsync
     return new Promise(function(resolve,reject){
@@ -47,13 +48,25 @@ function formatMessage(result){
     return message
 }
 
-// exports.formatMessage=function(xml){//导出
-//     return new Promise(function(resolve,reject){
-//         xml2js.parseString(xml,{trim:true},function(err,content){
-//             if(err) reject(err)
-//             else resolve(content)
-//         })
-//     })
-// }
 
 exports.formatMessage=formatMessage //把 message 对象进一步格式化出来
+
+exports.tpl=function(content,message){
+    var info={}//临时存储回复的内容
+    var type='text'//默认的类型
+    var fromUserName=message.FromUserName
+    var toUserName=message.ToUserName
+
+    if(Array.isArray(content)){//如果content是数组
+        type='news'//就是图文消息
+    }
+
+    type=content.type||type
+    info.content=content
+    info.createTime=new Date().getTime()//时间戳
+    info.msgType=type
+    info.toUserName=fromUserName
+    info.fromUserName=toUserName
+
+    return tpl.compiled(info)
+}
