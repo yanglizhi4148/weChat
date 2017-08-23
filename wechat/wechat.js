@@ -3,9 +3,11 @@
 var Promise = require('bluebird')
 var request = Promise.promisify(require('request'))//request是把bluebird进行promise化才有的
 var util=require('./util')
+var fs=require('fs')
 var prefix = 'https://api.weixin.qq.com/cgi-bin/'//作为URL的前缀
 var api = {//配置URL
-    accessToken: prefix + 'token?grant_type=client_credential'
+    accessToken: prefix + 'token?grant_type=client_credential',
+    upload:prefix+'media/upload?'
 }
 
 function Wechat(opts) {
@@ -14,6 +16,18 @@ function Wechat(opts) {
     this.appSecret = opts.appSecret
     this.getAccessToken = opts.getAccessToken//获取票据的方法
     this.saveAccessToken = opts.saveAccessToken//存储票据的方法
+
+    this.fetchAccessToken()
+}
+
+Wechat.prototype.fetchAccessToken=function(data){
+    var that=this
+
+    if(this.access_token && this.expires_in){
+        if(this.isValidAccessToken(this)){//没过有效期
+            return Promise.resolve(this)
+        }
+    }
 
     this.getAccessToken()//实现的是promise
         .then(function (data) {//拿到票据信息
@@ -35,6 +49,8 @@ function Wechat(opts) {
             that.expires_in = data.expires_in//过期的字段
 
             that.saveAccessToken(data)//调用，把票据存起来
+
+            return Promise.resolve(data)
         })
 }
 
@@ -73,6 +89,37 @@ Wechat.prototype.updateAccessToken = function (data) {//更新票据
 
             resolve(data)
         })
+    })
+
+}
+Wechat.prototype.uploadMaterial = function (type,filepath) {
+    var that=this
+
+    var form={
+        media:fs.createReadStream(filepath)
+    }
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.upload+'access_token='+data.access_token+'&type='+type
+
+                request({method:'POST',url: url,formData:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Upload material fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
     })
 
 }

@@ -1,5 +1,9 @@
 'use strict'
 
+var config=require('./config')
+var Wechat=require('./wechat/wechat')
+var wechatApi=new Wechat(config.wechat)//初始化wechatApi
+
 exports.reply=function*(next){
     var message=this.weixin
 
@@ -66,6 +70,36 @@ exports.reply=function*(next){
                 url:'https://nodejs.org/'
             }]
         }
+        else if(content==='8'){//图片上传
+            var data=yield wechatApi.uploadMaterial('image',__dirname+'/2.jpg')
+
+            reply={
+                type:'image',
+                mediaId:data.media_id
+            }
+        }
+        else if(content==='9'){//视频上传
+            var data=yield wechatApi.uploadMaterial('video',__dirname+'/6.mp4')
+
+            reply={
+                type:'video',
+                title:'视频',
+                description:'看看',
+                mediaId:data.media_id
+            }
+        }
+        else if(content==='10'){//音乐上传
+            var data=yield wechatApi.uploadMaterial('image',__dirname+'/2.jpg')
+
+            reply={
+                type:'music',
+                title:'音乐',
+                description:'放松一下',
+                musicUrl:'http://mpge.5nd.com/2015/2015-9-12/66325/1.mp3',
+                thumbMediaId:data.media_id
+            }
+        }
+
         this.body=reply
     }
 

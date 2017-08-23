@@ -13,15 +13,15 @@ var tpl=heredoc(function(){/*
     <Content><![CDATA[<%=content   %>]]></Content>
  <% } else if (msgType === 'image') { %>
     <Image>
-        <MediaId><![CDATA[<%= content.media_id %>]]></MediaId>
+        <MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
     </Image>
  <% } else if (msgType === 'voice') { %>
     <Voice>
-        <MediaId><![CDATA[<%= content.media_id %>]]></MediaId>
+        <MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
     </Voice>
  <% } else if (msgType === 'video') { %>
     <Video>
-        <MediaId><![CDATA[<%= content.media_id %>]]></MediaId>
+        <MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
         <Title><![CDATA[<%= content.title %>]]></Title>
         <Description><![CDATA[<%= content.description %>]]></Description>
     </Video>
@@ -31,7 +31,7 @@ var tpl=heredoc(function(){/*
         <Description><![CDATA[<%= content.description %>]]></Description>
         <MusicUrl><![CDATA[<%= content.musicUrl %>]]></MusicUrl>
         <HQMusicUrl><![CDATA[<%= content.hqMusicUrl %>]]></HQMusicUrl>
-        <ThumbMediaId><![CDATA[<%= content.ThumbMediaId %>]]></ThumbMediaId>
+        <ThumbMediaId><![CDATA[<%= content.thumbMediaId %>]]></ThumbMediaId>
     </Music>
  <% } else if (msgType === 'news') { %>
     <ArticleCount><%= content.length %></ArticleCount>

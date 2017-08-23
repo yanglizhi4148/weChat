@@ -52,19 +52,6 @@ module.exports = function (opts,handler) {
 
         console.log(message);
 
-        //判断消息的类型
-        // if(message.MsgType==='event'){//消息是事件
-        //     if(message.Event==='subscribe'){//事件时订阅事件
-        //         var now=new Date().getTime()//生成一个当前时间戳
-        //
-        //         that.status=200//设置回复的状态是200
-        //         that.type='application/xml'//设置回复的格式是XML格式
-        //         that.body=xml//设置回复的主体
-        //
-        //         return
-        //     }
-        // }
-
         //把解析好的message挂载到this上
         this.weixin=message
 
