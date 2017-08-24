@@ -122,6 +122,80 @@ exports.reply=function*(next){
                 mediaId:data.media_id
             }
         }
+        else if(content==='13'){
+            var picData=yield wechatApi.uploadMaterial('image',
+                __dirname+ '/2.jpg',{})
+
+            var media={
+                articles:[{
+                    title:'起风了',
+                    thumb_media_id:picData.media_id,
+                    author:'yang',
+                    digest:'摘要',
+                    show_cover_pic:1, //显示封面图
+                    content:'内容',
+                    content_source_url:'https://github.com'
+                },{
+                    title:'秋季',
+                    thumb_media_id:picData.media_id,
+                    author:'yang',
+                    digest:'摘要',
+                    show_cover_pic:1, //显示封面图
+                    content:'内容',
+                    content_source_url:'https://github.com'
+                }]
+            }
+
+            data=yield wechatApi.uploadMaterial('news',media,{})//更新永久素材
+            data=yield wechatApi.fetchMaterial(data.media_id,'news',{})//获取永久素材
+            console.log(data);
+
+            var items=data.news_item
+            var news=[]
+
+            items.forEach(function(item){
+                news.push({
+                    title:item.title,
+                    description:item.digest,
+                    picUrl:picData.url,
+                    url:item.url
+                })
+            })
+
+            reply=news
+        }
+        else if(content==='14'){
+            var counts=yield wechatApi.countMaterial()
+
+            console.log(JSON.stringify(counts));
+
+            var results=yield [
+                wechatApi.batchMaterial({
+                    type:'image',
+                    offset:0,
+                    count:10
+                }),
+                wechatApi.batchMaterial({
+                    type:'video',
+                    offset:0,
+                    count:10
+                }),
+                wechatApi.batchMaterial({
+                    type:'voice',
+                    offset:0,
+                    count:10
+                }),
+                wechatApi.batchMaterial({
+                    type:'news',
+                    offset:0,
+                    count:10
+                })
+            ]
+            // console.log(JSON.stringify(results))
+
+            reply='大锅乱炖'
+
+        }
 
         this.body=reply
     }

@@ -9,12 +9,18 @@ var prefix = 'https://api.weixin.qq.com/cgi-bin/'//作为URL的前缀
 var api = {//配置URL
     accessToken: prefix + 'token?grant_type=client_credential',
     temporary:{//临时素材
-        upload:prefix+'media/upload?'
+        upload:prefix+'media/upload?',
+        fetch:prefix+'media/get?'
     },
     permanent:{//永久素材
         upload:prefix+'material/add_material?',
+        fetch:prefix+'material/get_material?',
         uploadNews:prefix+'material/add_news?',
-        uploadNewsPic:prefix+'media/uploadimg?'
+        uploadNewsPic:prefix+'media/uploadimg?',
+        del:prefix+'material/del_material?',
+        update:prefix+'material/update_news?',
+        count:prefix+'material/get_materialcount?',//素材总数
+        batch:prefix+'material/batchget_material?'//素材列表
     }
 }
 
@@ -100,6 +106,7 @@ Wechat.prototype.updateAccessToken = function (data) {//更新票据
     })
 
 }
+//更新永久素材接口
 Wechat.prototype.uploadMaterial = function (type,material,permanent) {
     var that=this
     var form={}
@@ -151,7 +158,7 @@ Wechat.prototype.uploadMaterial = function (type,material,permanent) {
                     options.formData=form
                 }
 
-                request({method:'POST',url: url,formData:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                request(options).then(function (response) {//request是httpsget请求后的封装的库
                     //从URL地址里拿到JSON数据
                     var _data = response.body//拿到数组的第二个结果
 
@@ -169,6 +176,193 @@ Wechat.prototype.uploadMaterial = function (type,material,permanent) {
     })
 
 }
+
+//获取永久素材接口
+Wechat.prototype.fetchMaterial = function (mediaId,type,permanent) {
+    var that=this
+    var form={}
+    var fetchUrl=api.temporary.fetch//获取资源的URL地址
+
+    if(permanent){//判断参数有没有上传
+        fetchUrl=api.permanent.fetch
+    }
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=fetchUrl+'access_token='+data.access_token+
+                      '&media_id='+mediaId
+
+                var options={method:'POST',url: url, json: true}
+                var form={}
+                if(permanent){
+                    form.media_id=mediaId
+                    form.access_token=data.access_token
+                    options.body=form
+                }
+                else{
+                    if(type==='video'){//不是永久素材类型是video
+                        url=url.replace('https://','http://')//换成http协议
+                    }
+                    url+='&media_id='+mediaId
+                }
+                if(type==='news'||type==='video'){
+                    request(options)
+                        .then(function (response) {//request是httpsget请求后的封装的库
+                            //从URL地址里拿到JSON数据
+                            var _data = response.body//拿到数组的第二个结果
+
+                            if(_data){
+                                resolve(_data)
+                            }
+                            else{
+                                throw new Error('Fetch material fails')
+                            }
+                        })
+                        .catch(function(err){//捕获异常
+                            reject(err)
+                        })
+                }
+                else{
+                    resolve(url)
+                }
+
+            })
+    })
+
+}
+
+//删除永久素材接口
+Wechat.prototype.deleteMaterial = function (mediaId) {
+    var that=this
+    var form={
+        media_id:mediaId
+    }
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.permanent.del+'access_token='+data.access_token+
+                    '&media_id='+mediaId
+
+                request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Delete material fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//增加永久素材接口
+Wechat.prototype.updateMaterial = function (mediaId,news) {
+    var that=this
+    var form={
+        media_id:mediaId
+    }
+
+    _.extend(form,news)//让form继承传递进来的news
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.permanent.update+'access_token='+data.access_token+
+                    '&media_id='+mediaId
+
+                request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Update material fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//永久素材总数
+Wechat.prototype.countMaterial = function () {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.permanent.count+'access_token='+data.access_token
+
+                request({method:'GET',url: url, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Count material fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//永久素材列表
+Wechat.prototype.batchMaterial = function (options) {
+    var that=this
+
+    options.type=options.type||'image'//类型默认是images
+    options.offset=options.offset||0 //偏移量
+    options.count=options.count||1
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.permanent.batch+'access_token='+data.access_token
+
+                request({method:'POST',url: url,body:options, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Batch material fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
 
 Wechat.prototype.reply=function(){
     var content=this.body//拿到回复的内容
