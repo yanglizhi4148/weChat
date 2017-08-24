@@ -196,6 +196,69 @@ exports.reply=function*(next){
             reply='大锅乱炖'
 
         }
+        //用户分组测试
+        else if(content==='15'){
+            //创建分组
+            var group=yield wechatApi.createGroup('wechat7')
+
+            console.log('新分组 wechat7');
+            console.log(group);
+
+            var groups=yield wechatApi.fetchGroups()//查询分组
+
+            console.log('加了 wechat 后的分组列表');
+            console.log(groups);
+
+            var group2=yield wechatApi.checkGroup(message.FromUserName)
+
+            console.log('查看自己的分组');
+            console.log(group2);
+
+            //移动分组
+            var result=yield wechatApi.moveGroup(message.FromUserName,101)
+
+            console.log('移动到 101');
+            console.log(result);
+
+            var group3=yield wechatApi.fetchGroups()
+
+            console.log('移动后的分组列表');
+            console.log(group3);
+
+            //批量移动
+            var result2=yield wechatApi.moveGroup([message.FromUserName],100)
+
+            console.log('批量移动到 100');
+            console.log(result2);
+
+            var group4=yield wechatApi.fetchGroups()
+
+            console.log('批量移动后的分组列表');
+            console.log(group4);
+
+            var result3=yield wechatApi.updateGroup(102,'wechat102')
+
+            console.log('102 wechat2 改名 wechat102');
+            console.log(result3);
+
+            var group5=yield wechatApi.fetchGroups()
+
+            console.log('改名后的分组列表');
+            console.log(group5);
+
+            var result4=yield wechatApi.deleteGroup(103)
+
+            console.log('删除 103 08 分组');
+            console.log(result4);
+
+            var group6=yield wechatApi.fetchGroups()
+
+            console.log('删除103后的分组列表');
+            console.log(group6);
+
+            reply='Group done!'
+        }
+
 
         this.body=reply
     }

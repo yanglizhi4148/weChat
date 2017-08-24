@@ -21,6 +21,15 @@ var api = {//配置URL
         update:prefix+'material/update_news?',
         count:prefix+'material/get_materialcount?',//素材总数
         batch:prefix+'material/batchget_material?'//素材列表
+    },
+    group: {//用户分组管理
+        create: prefix + 'groups/create?',//创建
+        fetch: prefix + 'groups/get?',//获取
+        check: prefix + 'groups/getid?',//查询用户所在分组
+        update: prefix + 'groups/update?',//修改分组
+        move: prefix + 'groups/members/update?',//移动用户分组
+        batchupdate: prefix + 'groups/members/batchupdate?',//批量移动用户分组
+        del: prefix + 'groups/delete?'//删除分组
     }
 }
 
@@ -353,6 +362,245 @@ Wechat.prototype.batchMaterial = function (options) {
                     }
                     else{
                         throw new Error('Batch material fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//创建用户分组
+Wechat.prototype.createGroup = function (name) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.group.create+'access_token='+data.access_token
+
+                var form={
+                    group:{
+                        name:name
+                    }
+                }
+                request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Create group fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//获取用户分组
+Wechat.prototype.fetchGroups = function (name) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.group.fetch+'access_token='+data.access_token
+
+                //是get请求
+                request({url: url,json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Fetch group fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//查询用户分组
+Wechat.prototype.checkGroup = function (openId) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.group.check+'access_token='+data.access_token
+
+                var form={
+                    openid:openId
+                }
+                request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Check group fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//更新用户分组
+Wechat.prototype.updateGroup = function (id,name) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.group.update+'access_token='+data.access_token
+
+                var form={
+                    group:{
+                        id:id,
+                        name:name
+                    }
+                }
+                request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Update group fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+// //移动用户分组
+// Wechat.prototype.moveGroup = function (openId,to) {
+//     var that=this
+//
+//     return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+//         that
+//             .fetchAccessToken()
+//             .then(function(data){
+//                 var url=api.group.move+'access_token='+data.access_token
+//
+//                 var form={
+//                     openid:openId,
+//                     to_groupid:to
+//                 }
+//                 request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+//                     //从URL地址里拿到JSON数据
+//                     var _data = response.body//拿到数组的第二个结果
+//
+//                     if(_data){
+//                         resolve(_data)
+//                     }
+//                     else{
+//                         throw new Error('Move group fails')
+//                     }
+//                 })
+//                     .catch(function(err){//捕获异常
+//                         reject(err)
+//                     })
+//             })
+//     })
+//
+// }
+
+//移动或批量移动用户分组
+Wechat.prototype.moveGroup = function (openIds,openId,to) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url
+                var form={
+                    to_groupid:to
+                }
+                //判断openIds是不是数组，如果是，则就是批量移动
+                if(_.isArray(openIds)){
+                    url=api.group.batchupdate+'access_token='+data.access_token
+                    form.openid_list=openIds
+                }
+                else{
+                    url=api.group.move+'access_token='+data.access_token
+                    form.openid=openId
+                }
+
+                request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Move group fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//删除分组
+Wechat.prototype.deleteGroup = function (id) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.group.del+'access_token='+data.access_token
+
+                var form={
+                    group:{
+                        id:id
+                    }
+                }
+                request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Delete group fails')
                     }
                 })
                     .catch(function(err){//捕获异常
