@@ -99,6 +99,29 @@ exports.reply=function*(next){
                 thumbMediaId:data.media_id
             }
         }
+        //永久素材上传
+        else if(content==='11'){//图片上传
+            var data=yield wechatApi.uploadMaterial('image',__dirname+
+                '/2.jpg',{type:'image'})
+
+            reply={
+                type:'image',
+                mediaId:data.media_id
+            }
+        }
+        else if(content==='12'){//视频上传
+            var data=yield wechatApi.uploadMaterial('image',
+                __dirname+ '/6.mp4',{type:'video',
+                    description: '{"title":"Really a nice place","introduction":"Never think it so easy"}'})
+            console.log(data);
+
+            reply={
+                type:'video',
+                title:'视频',
+                description:'看看',
+                mediaId:data.media_id
+            }
+        }
 
         this.body=reply
     }

@@ -1,13 +1,21 @@
 'use strict'
 
 var Promise = require('bluebird')
+var _=require('lodash')
 var request = Promise.promisify(require('request'))//request是把bluebird进行promise化才有的
 var util=require('./util')
 var fs=require('fs')
 var prefix = 'https://api.weixin.qq.com/cgi-bin/'//作为URL的前缀
 var api = {//配置URL
     accessToken: prefix + 'token?grant_type=client_credential',
-    upload:prefix+'media/upload?'
+    temporary:{//临时素材
+        upload:prefix+'media/upload?'
+    },
+    permanent:{//永久素材
+        upload:prefix+'material/add_material?',
+        uploadNews:prefix+'material/add_news?',
+        uploadNewsPic:prefix+'media/uploadimg?'
+    }
 }
 
 function Wechat(opts) {
@@ -92,18 +100,56 @@ Wechat.prototype.updateAccessToken = function (data) {//更新票据
     })
 
 }
-Wechat.prototype.uploadMaterial = function (type,filepath) {
+Wechat.prototype.uploadMaterial = function (type,material,permanent) {
     var that=this
+    var form={}
+    var uploadUrl=api.temporary.upload
 
-    var form={
-        media:fs.createReadStream(filepath)
+    if(permanent){//判断参数有没有上传
+        uploadUrl=api.permanent.upload
+
+        _.extend(form,permanent)//继承
     }
+
+    if(type==='pic'){//上传类型是图片
+        uploadUrl=api.permanent.uploadNewsPic
+    }
+    if(type==='news'){//上传类型是图文
+        uploadUrl=api.permanent.uploadNews
+        form=material//material上传是图文是一个数组，其他时候是字符串
+    }else{
+        form.media=fs.createReadStream(material)
+    }
+
+    // var form={
+    //     media:fs.createReadStream(filepath)
+    // }
 
     return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
         that
             .fetchAccessToken()
             .then(function(data){
-                var url=api.upload+'access_token='+data.access_token+'&type='+type
+                var url=uploadUrl+'access_token='+data.access_token
+                // var url=api.upload+'access_token='+data.access_token+'&type='+type
+                if(!permanent){//如果不是永久素材类型
+                    url+='&type='+type
+                }
+                else{
+                    form.access_token=data.access_token
+                }
+
+                var options={
+                    method:'POST',
+                    url:url,
+                    json:true
+                }
+
+                if(type==='news'){//类型是图文
+                    options.body=form
+                }
+                else{
+                    options.formData=form
+                }
 
                 request({method:'POST',url: url,formData:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
                     //从URL地址里拿到JSON数据
