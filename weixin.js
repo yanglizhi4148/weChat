@@ -258,7 +258,31 @@ exports.reply=function*(next){
 
             reply='Group done!'
         }
+        else if(content==='16'){//获取用户信息
+            var user=yield wechatApi.fetchUsers(message.FromUserName,'en')
 
+            console.log(user);
+
+            //批量获取
+            var openIds=[
+                {
+                    openid:message.FromUserName,
+                    lang:'en'
+                }
+            ]
+            var users=wechatApi.fetchUsers(openIds)
+
+            console.log(users);
+
+            reply=JSON.stringify(user)
+        }
+        else if(content==='17'){//获取用户列表
+            var userlist=yield wechatApi.listUsers()
+
+            console.log(userlist);
+
+            reply=userlist.total
+        }
 
         this.body=reply
     }

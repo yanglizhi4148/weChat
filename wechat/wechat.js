@@ -30,6 +30,12 @@ var api = {//配置URL
         move: prefix + 'groups/members/update?',//移动用户分组
         batchupdate: prefix + 'groups/members/batchupdate?',//批量移动用户分组
         del: prefix + 'groups/delete?'//删除分组
+    },
+    user:{//用户信息
+        remark:prefix+'user/info/updateremark?',
+        fetch:prefix+'user/info?',
+        batchFetch:prefix+'user/info/batchget?',
+        list:prefix+'user/get?'
     }
 }
 
@@ -503,41 +509,8 @@ Wechat.prototype.updateGroup = function (id,name) {
 
 }
 
-// //移动用户分组
-// Wechat.prototype.moveGroup = function (openId,to) {
-//     var that=this
-//
-//     return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
-//         that
-//             .fetchAccessToken()
-//             .then(function(data){
-//                 var url=api.group.move+'access_token='+data.access_token
-//
-//                 var form={
-//                     openid:openId,
-//                     to_groupid:to
-//                 }
-//                 request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
-//                     //从URL地址里拿到JSON数据
-//                     var _data = response.body//拿到数组的第二个结果
-//
-//                     if(_data){
-//                         resolve(_data)
-//                     }
-//                     else{
-//                         throw new Error('Move group fails')
-//                     }
-//                 })
-//                     .catch(function(err){//捕获异常
-//                         reject(err)
-//                     })
-//             })
-//     })
-//
-// }
-
 //移动或批量移动用户分组
-Wechat.prototype.moveGroup = function (openIds,openId,to) {
+Wechat.prototype.moveGroup = function (openIds,to) {
     var that=this
 
     return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
@@ -601,6 +574,115 @@ Wechat.prototype.deleteGroup = function (id) {
                     }
                     else{
                         throw new Error('Delete group fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//设置备注名
+Wechat.prototype.remarkUser = function (openId,remark) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.user.remark+'access_token='+data.access_token
+
+                var form={
+                    openid:openId,
+                    remark:remark
+                }
+                request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Remark user fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//获取用户基本信息
+Wechat.prototype.fetchUsers = function (openIds,lang) {
+    var that=this
+
+    lang=lang||'zh_CN'//语言标识
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var options={
+                    json:true
+                }
+                if(_.isArray(data)){//是数组，批量获取
+                    options.url=api.user.batchFetch+'access_token='+data.access_token
+                    options.body={
+                        user_list:openIds
+                    }
+                    options.method='POST'
+                }
+                else{
+                    options.url=api.user.fetch+'access_token='+data.access_token+
+                            '&openid='+ openIds +'&lang=' + lang
+                }
+
+                request(options).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Fetch user fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//获取用户列表
+Wechat.prototype.listUsers = function (openId) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.user.list+'access_token='+data.access_token
+
+                if(openId){//如果传入openId
+                    url+='&next_openid='+openId
+                }
+
+                request({url: url, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('List user fails')
                     }
                 })
                     .catch(function(err){//捕获异常
