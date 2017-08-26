@@ -193,6 +193,7 @@ exports.reply=function*(next){
             ]
             // console.log(JSON.stringify(results))
 
+            console.log(JSON.stringify(results));
             reply='大锅乱炖'
 
         }
@@ -282,6 +283,38 @@ exports.reply=function*(next){
             console.log(userlist);
 
             reply=userlist.total
+        }
+        else if(content==='18'){//分组群发消息
+            var mpnews={
+                media_id:'XwzAGp1UCtlgpvG-IfIZMtf4uVkDrxP-eEKn4LfRgzw'
+            }
+
+            var text={
+                'content':'Hello Wechat'
+            }
+            var msgData=yield wechatApi.sendByGroup('text',text,0)
+
+            console.log(msgData);
+            reply='Yeah!'
+        }
+        else if(content==='19'){//预览群发消息
+            var mpnews={
+                media_id:'XwzAGp1UCtlgpvG-IfIZMtf4uVkDrxP-eEKn4LfRgzw'
+            }
+
+            // var text={
+            //     'content':'Hello Wechat'
+            // }
+            var msgData=yield wechatApi.previewMass('mpnews',mpnews,'o8usp0XzbvhFFG36Q-rtcKL_3Buo')
+
+            console.log(msgData);
+            reply='Yeah!'
+        }
+        else if(content==='20'){//查询群发消息发送状态
+            var msgData=yield wechatApi.checkMass('1000000002')
+
+            console.log(msgData);
+            reply='OK, success!'
         }
 
         this.body=reply

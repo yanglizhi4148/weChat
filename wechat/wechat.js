@@ -36,6 +36,13 @@ var api = {//配置URL
         fetch:prefix+'user/info?',
         batchFetch:prefix+'user/info/batchget?',
         list:prefix+'user/get?'
+    },
+    mass:{//群发消息
+        group:prefix+'message/mass/sendall?',
+        openId:prefix+'message/mass/send?',
+        del:prefix+'message/mass/delete?',
+        preview:prefix+'message/mass/preview?',
+        check:prefix+'message/mass/get?'
     }
 }
 
@@ -683,6 +690,183 @@ Wechat.prototype.listUsers = function (openId) {
                     }
                     else{
                         throw new Error('List user fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//群发消息
+Wechat.prototype.sendByGroup = function (type,message,groupId) {
+    var that=this
+
+    var msg={
+        filter:{},
+        msgtype:type
+    }
+    msg[type]=message
+    if(!groupId){//如果没有传入groupId，说明群发给多有人
+        msg.filter.is_to_all=true
+    }
+    else{//群发给指定群组
+        msg.filter={
+            is_to_all:false,
+            group_id:groupId
+        }
+
+    }
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.mass.group+'access_token='+data.access_token
+
+                request({method:'POST',url: url,body:msg, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Send to group fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//通过id发送图文消息
+Wechat.prototype.sendByOpenId = function (type,message,openIds) {
+    var that=this
+
+    var msg={
+        msgtype:type,
+        touser:openIds
+    }
+    msg[type]=message
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.mass.openId+'access_token='+data.access_token
+
+                request({method:'POST',url: url,body:msg, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Send By Openid fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//删除群发消息
+Wechat.prototype.deleteMass = function (msgId) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.mass.del+'access_token='+data.access_token
+
+                var form={
+                    msg_id:msgId
+                }
+                request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Delete mass fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//预览群发消息
+Wechat.prototype.previewMass = function (type,message,openId) {
+    var that=this
+
+    var msg={
+        msgtype:type,
+        touser:openId
+    }
+    msg[type]=message
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.mass.preview+'access_token='+data.access_token
+
+                request({method:'POST',url: url,body:msg, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Preview mass fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//查询群发消息发送状态
+Wechat.prototype.checkMass = function (msgId) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.mass.check+'access_token='+data.access_token
+
+                var form={
+                    msg_id:msgId
+                }
+                request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Check mass fails')
                     }
                 })
                     .catch(function(err){//捕获异常
