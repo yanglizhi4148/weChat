@@ -61,7 +61,8 @@ exports.tpl=function(content,message){
         type='news'//就是图文消息
     }
 
-    type=content.type||type
+    content = content || {}
+    type=content.type || type
     info.content=content
     info.createTime=new Date().getTime()//时间戳
     info.msgType=type

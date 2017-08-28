@@ -43,6 +43,12 @@ var api = {//配置URL
         del:prefix+'message/mass/delete?',
         preview:prefix+'message/mass/preview?',
         check:prefix+'message/mass/get?'
+    },
+    menu:{//菜单
+        create:prefix+'menu/create?',
+        get:prefix+'menu/get?',
+        del:prefix+'menu/delete?',
+        current:prefix+'get_current_selfmenu_info?'
     }
 }
 
@@ -65,7 +71,7 @@ Wechat.prototype.fetchAccessToken=function(data){
         }
     }
 
-    this.getAccessToken()//实现的是promise
+    return this.getAccessToken()//实现的是promise
         .then(function (data) {//拿到票据信息
             try {
                 data = JSON.parse(data)//字符串JSON化
@@ -867,6 +873,122 @@ Wechat.prototype.checkMass = function (msgId) {
                     }
                     else{
                         throw new Error('Check mass fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//创建菜单
+Wechat.prototype.createMenu = function (menu) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.menu.create+'access_token='+data.access_token
+
+                request({method:'POST',url: url,body:menu, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Create menu fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//查询菜单
+Wechat.prototype.getMenu = function (menu) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.menu.get+'access_token='+data.access_token
+
+                request({url: url, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Get menu fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//删除菜单
+Wechat.prototype.deleteMenu = function () {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.menu.del+'access_token='+data.access_token
+
+                request({url: url, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Delete menu fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//获取自定义菜单
+Wechat.prototype.getCurrentMenu = function () {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.menu.current+'access_token='+data.access_token
+
+                request({url: url, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Get current menu fails')
                     }
                 })
                     .catch(function(err){//捕获异常

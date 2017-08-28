@@ -1,8 +1,17 @@
 'use strict'
 
-var config=require('./config')
-var Wechat=require('./wechat/wechat')
+var path=require('path')
+var config=require('../config')
+var Wechat=require('../wechat/wechat')
+var menu=require('./menu')
 var wechatApi=new Wechat(config.wechat)//初始化wechatApi
+
+wechatApi.deleteMenu().then(function(){
+    return wechatApi.createMenu(menu)
+})
+    .then(function(msg){
+        console.log(msg);
+    })
 
 exports.reply=function*(next){
     var message=this.weixin
@@ -23,15 +32,48 @@ exports.reply=function*(next){
             this.body='您上报的位置是：'+message.Latitude+'/'+message.Longitude+'-'+
                 message.Precision
         }
-        else if(message.Event==='click'){//点击事件
+        else if(message.Event==='CLICK'){//点击事件
             this.body='您点击了菜单：'+message.EventKey
         }
         else if(message.Event==='SCAN'){//扫描事件
             console.log('关注后扫二维码'+message.EventKey+' '+message.Ticket);
             this.body='看到你扫了一下'
         }
-        else if(message.Evnt==='VIEW'){
+        else if(message.Event==='VIEW'){
             this.body='您点击了菜单中的链接：'+message.EventKey//EventKey就是菜单URL地址
+        }
+        else if(message.Event==='scancode_push'){
+            console.log(message.ScanCodeInfo.ScanType);
+            console.log(message.ScanCodeInfo.ScanResult);
+            this.body='您点击了菜单中：'+message.EventKey
+        }
+        else if(message.Event==='scancode_waitmsg'){
+            console.log(message.ScanCodeInfo.ScanType);
+            console.log(message.ScanCodeInfo.ScanResult);
+            this.body='您点击了菜单中：'+message.EventKey
+        }
+        else if(message.Event==='pic_sysphoto'){
+            console.log(message.SendPicsInfo.PicList);
+            console.log(message.SendPicsInfo.Count);
+            this.body='您点击了菜单中：'+message.EventKey
+        }
+        else if(message.Event==='pic_photo_or_album'){
+            console.log(message.SendPicsInfo.PicList);
+            console.log(message.SendPicsInfo.Count);
+            this.body='您点击了菜单中：'+message.EventKey
+        }
+        else if(message.Event==='pic_weixin'){
+            console.log(message.SendPicsInfo.PicList);
+            console.log(message.SendPicsInfo.Count);
+            this.body='您点击了菜单中：'+message.EventKey
+        }
+        else if(message.Event==='location_select'){
+            console.log(message.SendLocationInfo.Location_X);
+            console.log(message.SendLocationInfo.Location_Y);
+            console.log(message.SendLocationInfo.Scale);
+            console.log(message.SendLocationInfo.Label);
+            console.log(message.SendLocationInfo.Poiname);
+            this.body='您点击了菜单中：'+message.EventKey
         }
     }
     else if(message.MsgType==='text'){
@@ -71,7 +113,7 @@ exports.reply=function*(next){
             }]
         }
         else if(content==='8'){//图片上传
-            var data=yield wechatApi.uploadMaterial('image',__dirname+'/2.jpg')
+            var data=yield wechatApi.uploadMaterial('image',path.join(__dirname,'../2.jpg'))
 
             reply={
                 type:'image',
@@ -79,7 +121,7 @@ exports.reply=function*(next){
             }
         }
         else if(content==='9'){//视频上传
-            var data=yield wechatApi.uploadMaterial('video',__dirname+'/6.mp4')
+            var data=yield wechatApi.uploadMaterial('video',path.join(__dirname,'../6.mp4'))
 
             reply={
                 type:'video',
@@ -89,7 +131,7 @@ exports.reply=function*(next){
             }
         }
         else if(content==='10'){//音乐上传
-            var data=yield wechatApi.uploadMaterial('image',__dirname+'/2.jpg')
+            var data=yield wechatApi.uploadMaterial('image',path.join(__dirname,'../2.jpg'))
 
             reply={
                 type:'music',
@@ -101,8 +143,8 @@ exports.reply=function*(next){
         }
         //永久素材上传
         else if(content==='11'){//图片上传
-            var data=yield wechatApi.uploadMaterial('image',__dirname+
-                '/2.jpg',{type:'image'})
+            var data=yield wechatApi.uploadMaterial('image',path.join(__dirname,
+                '../2.jpg'),{type:'image'})
 
             reply={
                 type:'image',
@@ -111,7 +153,7 @@ exports.reply=function*(next){
         }
         else if(content==='12'){//视频上传
             var data=yield wechatApi.uploadMaterial('image',
-                __dirname+ '/6.mp4',{type:'video',
+                path.join(__dirname, '../6.mp4'),{type:'video',
                     description: '{"title":"Really a nice place","introduction":"Never think it so easy"}'})
             console.log(data);
 
@@ -124,7 +166,7 @@ exports.reply=function*(next){
         }
         else if(content==='13'){
             var picData=yield wechatApi.uploadMaterial('image',
-                __dirname+ '/2.jpg',{})
+                path.join(__dirname, '../2.jpg'),{})
 
             var media={
                 articles:[{
