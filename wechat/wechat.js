@@ -6,6 +6,7 @@ var request = Promise.promisify(require('request'))//request是把bluebird进行
 var util=require('./util')
 var fs=require('fs')
 var prefix = 'https://api.weixin.qq.com/cgi-bin/'//作为URL的前缀
+var mpPrefix = 'https://mp.weixin.qq.com/cgi-bin/'//作为URL的前缀
 var api = {//配置URL
     accessToken: prefix + 'token?grant_type=client_credential',
     temporary:{//临时素材
@@ -49,6 +50,13 @@ var api = {//配置URL
         get:prefix+'menu/get?',
         del:prefix+'menu/delete?',
         current:prefix+'get_current_selfmenu_info?'
+    },
+    qrcode:{//二维码
+        create:prefix+'qrcode/create?',//创建二维码
+        show:mpPrefix+'showqrcode?'//换取二维码
+    },
+    shortUrl:{//长链接转成短链接
+        create:prefix+'shortUrl?'
     }
 }
 
@@ -989,6 +997,75 @@ Wechat.prototype.getCurrentMenu = function () {
                     }
                     else{
                         throw new Error('Get current menu fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//创建二维码
+Wechat.prototype.createQrcode = function (qr) {
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.qrcode.create+'access_token='+data.access_token
+
+                request({method:'POST',url: url,body:qr, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Create qrcode fails')
+                    }
+                })
+                    .catch(function(err){//捕获异常
+                        reject(err)
+                    })
+            })
+    })
+
+}
+
+//转换二维码
+Wechat.prototype.showQrcode = function (ticket) {
+    return api.qrcode.show+'ticket='+encodeURI(ticket)
+}
+
+//长链接改成短链接
+Wechat.prototype.createShorturl = function (action,url) {
+    action=action||'long2short'
+
+    var that=this
+
+    return new Promise(function (resolve, reject) {//resolve,reject判断结果是成功还是失败
+        that
+            .fetchAccessToken()
+            .then(function(data){
+                var url=api.shortUrl.create+'access_token='+data.access_token
+
+                var form={
+                    action:action,
+                    long_url:url
+                }
+                request({method:'POST',url: url,body:form, json: true}).then(function (response) {//request是httpsget请求后的封装的库
+                    //从URL地址里拿到JSON数据
+                    var _data = response.body//拿到数组的第二个结果
+
+                    if(_data){
+                        resolve(_data)
+                    }
+                    else{
+                        throw new Error('Create shorturl fails')
                     }
                 })
                     .catch(function(err){//捕获异常

@@ -358,6 +358,45 @@ exports.reply=function*(next){
             console.log(msgData);
             reply='OK, success!'
         }
+        else if(content==='21'){//二维码测试
+            var tempQr={//临时型
+                expires_seconds:400000,//过期时间
+                action_name:'QR_SCENE',
+                action_info:{
+                    scene:{
+                        scene_id:123
+                    }
+                }
+            }
+            var permQr={//永久 整型
+                action_name:'QR_LIMIT_SCENE',
+                action_info:{
+                    scene:{
+                        scene_id:123
+                    }
+                }
+            }
+            var permStrQr={//永久 字符串
+                action_name:'QR_LIMIT_STR_SCENE',
+                action_info:{
+                    scene:{
+                        scene_str:'abc'
+                    }
+                }
+            }
+            var qr1=yield wechatApi.createQrcode(tempQr)
+            var qr2=yield wechatApi.createQrcode(permQr)
+            var qr3=yield wechatApi.createQrcode(permStrQr)
+
+            reply='OK'
+        }
+        else if(content==='22'){//转链接
+            var longUrl='http://www.imooc.com/'
+
+            var shortData=yield wechatApi.createShorturl(null,longUrl)
+
+            reply=shortData.shortUrl
+        }
 
         this.body=reply
     }
