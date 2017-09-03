@@ -397,6 +397,19 @@ exports.reply=function*(next){
 
             reply=shortData.shortUrl
         }
+        else if(content==='23'){//语义接口调用
+            var semanticData={
+                query:"寻龙诀",
+                city:"杭州",
+                category: "movie",
+                uid:message.FromUserName
+            }
+
+            var _semanticData=yield wechatApi.semantic(semanticData)
+
+            reply=JSON.stringify(_semanticData)
+        }
+
 
         this.body=reply
     }
