@@ -92,7 +92,7 @@ exports.reply=function*(next){
                     title:movie.title,
                     description:movie.title,
                     picUrl:movie.poster,
-                    url:'http://116.196.67.60/movie/'+movie._id
+                    url:'http://116.196.67.60/wechat/movie/'+movie._id
                 })
             })
         }else{//没有数据
@@ -451,7 +451,7 @@ exports.reply=function*(next){
                         title:movie.title,
                         description:movie.title,
                         picUrl:movie.poster,
-                        url:'http://116.196.67.60/movie/'+movie._id
+                        url:'http://116.196.67.60/wechat/movie/'+movie._id
                     })
                 })
             }else{//没有数据

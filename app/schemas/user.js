@@ -1,3 +1,5 @@
+'use strict'
+
 var mongoose = require('mongoose')
 // var bcrypt = require('bcrypt')
 var bcrypt = require('bcrypt-nodejs')
@@ -53,12 +55,14 @@ UserSchema.pre('save', function(next) {
 })
 
 UserSchema.methods = {
-    comparePassword: function(_password, cb) {
-        bcrypt.compare(_password, this.password, function(err, isMatch) {
-            if (err) return cb(err)
+    comparePassword: function(_password,password) {
+        // var password=this.password
+        return function(cb){
+            bcrypt.compare(_password, password, function(err, isMatch) {
+                cb(err, isMatch)
+            })
+        }
 
-            cb(null, isMatch)
-        })
     }
 }
 

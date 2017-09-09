@@ -44,20 +44,37 @@ wechatApi.deleteMenu().then(function(){
 
 var app=new Koa()
 var Router=require('koa-router')
+var session=require('koa-session')
+var bodyParser=require('koa-bodyparser')
 var router=new Router()
 var game=require('./app/controllers/game')
 var wechat=require('./app/controllers/wechat')
-
+var User=mongoose.model('User')//User是数据库模型
 var views=require('koa-views')
 
 app.use(views(__dirname+'/app/views',{
     extension:'jade'
 }))
 
-router.get('/movie',game.guess)
-router.get('/movie/:id',game.find)
-router.get('/wx',wechat.hear)
-router.post('/wx',wechat.hear)
+app.keys=['test']
+app.use(session(app))
+
+app.use(bodyParser())
+
+app.use(function *(next){
+    var user=this.session.user
+
+    if(user && user._id){//user有没有挂载在session上，同时是合法的
+        this.session.user=yield User.findOne({_id:user._id}).exec()//更新session
+        this.state.user=this.session.user
+    }
+    else{
+        this.state.user=null
+    }
+    yield next
+})
+
+require('./config/routes')(router)
 
 app.use(router.routes())
     .use(router.allowedMethods())

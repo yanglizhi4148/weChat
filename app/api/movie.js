@@ -2,6 +2,7 @@
 
 var mongoose=require('mongoose')
 var Movie=mongoose.model('Movie')
+var co=require('co')
 var Promise=require('bluebird')
 var koa_request=require('koa-request')
 var request=Promise.promisify(require('request'))
@@ -91,11 +92,13 @@ function updateMovies(movie) {
                         })
 
                         cat=yield cat.save()
-
                         movie.category=cat._id
                         yield movie.save()
                     }
                 })
+            })
+            co(function *(){
+                yield cateArray
             })
         }
         else{
@@ -148,11 +151,12 @@ exports.searchByDouban=function*(q){
             })
         })
 
+        yield queryArray
+
+        //存储后的电影数组
         movies.forEach(function(movie){//执行异步任务
             updateMovies(movie)
         })
-
-        yield queryArray
     }
     return movies
 }
