@@ -50,6 +50,28 @@ exports.searchByName=function*(q){
     return movies
 }
 
+exports.findHotMovies=function*(hot,count){
+    var movies=yield Movie
+        .find({})
+        .sort({'pv':hot})
+        .limit(count)
+        .exec()
+
+    return movies
+}
+
+exports.findMoviesByCate=function*(cat){
+    var category=yield Category
+        .findOne({name:cat})
+        .populate({
+            path:'movies',
+            select:'title poster _id'
+        })
+        .exec()
+
+    return category
+}
+
 exports.searchById=function*(id){
     var movies=yield Movie
         .findOne({_id:id})

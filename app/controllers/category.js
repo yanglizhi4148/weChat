@@ -5,7 +5,7 @@ var Category = mongoose.model('Category')
 
 // admin new page
 exports.new = function *(next) {
-    this.render('pages/category_admin', {
+    yield this.render('pages/category_admin', {
         title: 'imooc 后台分类录入页',
         category: {}
     })
@@ -25,7 +25,7 @@ exports.save = function *(next) {
 exports.list = function *(next) {
     var catetories = yield Category.find({}).exec()
 
-    this.render('categorylist', {
+    yield this.render('pages/categorylist', {
         title: 'imooc 分类列表页',
         catetories: catetories
     })

@@ -1,9 +1,16 @@
 'use strict'
 
-var path=require('path')
-var wx=require('../wx/index')
+// var path=require('path')
+// var wx=require('../wx/index')
 var Movie=require('../app/api/movie')
-var wechatApi=wx.getWechat()
+// var wechatApi=wx.getWechat()
+var help='欢迎关注科幻电影世界\n'+
+    '回复 1~6，测试文字回复\n'+
+    '回复 7，测试图文回复\n'+
+    '回复 首页，进入电影首页\n'+
+    '回复 电影名字，查询电影信息\n'+
+    '回复 语音，查询电影信息\n'+
+    '也可以点击 <a href="http://116.196.67.60/movie">语音查电影</a>'
 
 exports.reply=function*(next){
     var message=this.weixin
@@ -11,15 +18,7 @@ exports.reply=function*(next){
     //判断消息类型
     if(message.MsgType==='event'){//事件推送
         if(message.Event==='subscribe'){//订阅事件
-            this.body='欢迎关注科幻电影世界\n'+
-                    '回复 1~6，测试文字回复\n'+
-                    '回复 7，测试图文回复\n'+
-                    '回复 首页，进入电影首页\n'+
-                    '回复 登录，进入微信登录绑定\n'+
-                    '回复 游戏，进入游戏页面\n'+
-                    '回复 电影名字，查询电影信息\n'+
-                    '回复 语音，查询电影信息\n'+
-                    '也可以点击<a href="http:// /movie">语音查电影</a>'
+            this.body=help
         }
         else if(message.Event==='unsubscribe'){//取消订阅
             console.log('无情取关');
@@ -30,47 +29,59 @@ exports.reply=function*(next){
                 message.Precision
         }
         else if(message.Event==='CLICK'){//点击事件
-            this.body='您点击了菜单：'+message.EventKey
-        }
-        else if(message.Event==='SCAN'){//扫描事件
-            console.log('关注后扫二维码'+message.EventKey+' '+message.Ticket);
-            this.body='看到你扫了一下'
-        }
-        else if(message.Event==='VIEW'){
-            this.body='您点击了菜单中的链接：'+message.EventKey//EventKey就是菜单URL地址
-        }
-        else if(message.Event==='scancode_push'){
-            console.log(message.ScanCodeInfo.ScanType);
-            console.log(message.ScanCodeInfo.ScanResult);
-            this.body='您点击了菜单中：'+message.EventKey
-        }
-        else if(message.Event==='scancode_waitmsg'){
-            console.log(message.ScanCodeInfo.ScanType);
-            console.log(message.ScanCodeInfo.ScanResult);
-            this.body='您点击了菜单中：'+message.EventKey
-        }
-        else if(message.Event==='pic_sysphoto'){
-            console.log(message.SendPicsInfo.PicList);
-            console.log(message.SendPicsInfo.Count);
-            this.body='您点击了菜单中：'+message.EventKey
-        }
-        else if(message.Event==='pic_photo_or_album'){
-            console.log(message.SendPicsInfo.PicList);
-            console.log(message.SendPicsInfo.Count);
-            this.body='您点击了菜单中：'+message.EventKey
-        }
-        else if(message.Event==='pic_weixin'){
-            console.log(message.SendPicsInfo.PicList);
-            console.log(message.SendPicsInfo.Count);
-            this.body='您点击了菜单中：'+message.EventKey
-        }
-        else if(message.Event==='location_select'){
-            console.log(message.SendLocationInfo.Location_X);
-            console.log(message.SendLocationInfo.Location_Y);
-            console.log(message.SendLocationInfo.Scale);
-            console.log(message.SendLocationInfo.Label);
-            console.log(message.SendLocationInfo.Poiname);
-            this.body='您点击了菜单中：'+message.EventKey
+            var news=[]
+
+            if(message.EventKey==='movie_hot'){
+                let movies=yield Movie.findHotMovies(-1,10)
+
+                movies.forEach(function(movie){
+                    news.push({
+                        title:movie.title,
+                        description:movie.title,
+                        picUrl:movie.poster,
+                        url:'http://116.196.67.60/wechat/jump/'+movie._id
+                    })
+                })
+            }
+            else if(message.EventKey==='movie_cold'){
+                let movies=yield Movie.findHotMovies(1,10)
+
+                movies.forEach(function(movie){
+                    news.push({
+                        title:movie.title,
+                        description:movie.title,
+                        picUrl:movie.poster,
+                        url:'http://116.196.67.60/wechat/jump/'+movie._id
+                    })
+                })
+            }
+            else if(message.EventKey==='movie_crime'){
+                let cat=yield Movie.findMoviesByCate('犯罪')
+                cat.movies.forEach(function(movie) {
+                    news.push({
+                        title: movie.title,
+                        description: movie.title,
+                        picUrl: movie.poster,
+                        url: 'http://116.196.67.60/wechat/jump/' + movie._id
+                    })
+                })
+            }
+            else if(message.EventKey==='movie_cartoon'){
+                let cat=yield Movie.findMoviesByCate('动画')
+                cat.movies.forEach(function(movie) {
+                    news.push({
+                        title: movie.title,
+                        description: movie.title,
+                        picUrl: movie.poster,
+                        url: 'http://116.196.67.60/wechat/jump/' + movie._id
+                    })
+                })
+            }
+            else if(message.EventKey==='help'){
+                news=help
+            }
+
+            this.body=news
         }
     }
     else if(message.MsgType==='voice'){
@@ -92,7 +103,7 @@ exports.reply=function*(next){
                     title:movie.title,
                     description:movie.title,
                     picUrl:movie.poster,
-                    url:'http://116.196.67.60/wechat/movie/'+movie._id
+                    url:'http://116.196.67.60/wechat/jump/'+movie._id
                 })
             })
         }else{//没有数据
@@ -451,7 +462,7 @@ exports.reply=function*(next){
                         title:movie.title,
                         description:movie.title,
                         picUrl:movie.poster,
-                        url:'http://116.196.67.60/wechat/movie/'+movie._id
+                        url:'http://116.196.67.60/wechat/jump/'+movie._id
                     })
                 })
             }else{//没有数据

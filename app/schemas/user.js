@@ -10,6 +10,7 @@ var UserSchema = new mongoose.Schema({
         unique: true,
         type: String
     },
+    openid:String,
     password: String,
     // 0: nomal user
     // 1: verified user
