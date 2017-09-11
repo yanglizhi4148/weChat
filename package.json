@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
-    "bcrypt-nodejs": "0.0.3",
+    "bcrypt-nodejs": "^0.0.3",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.0",
     "co": "^4.6.0",
@@ -22,14 +22,14 @@
     "koa-views": "^6.0.2",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
+    "mongoose": "^4.11.10",
     "node-pre-gyp": "^0.6.36",
     "path": "^0.12.7",
     "raw-body": "^2.3.0",
     "request": "^2.81.0",
     "sha1": "^1.1.1",
     "tpl": "^0.3.0",
-    "xml2js": "^0.4.18",
-    "mongoose": "^4.11.10"
+    "xml2js": "^0.4.18"
   },
   "devDependencies": {},
   "scripts": {
