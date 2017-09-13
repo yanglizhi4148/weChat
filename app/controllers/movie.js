@@ -53,7 +53,7 @@ exports.update = function *(next) {
     }
 }
 
-var util = require('../../util')
+var util = require('../../libs/util')
 
 // admin poster
 exports.savePoster = function *(next) {
