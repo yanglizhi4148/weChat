@@ -8,6 +8,7 @@ var koa_request=require('koa-request')
 var request=Promise.promisify(require('request'))
 var Category=mongoose.model('Category')
 var _lodash=require('lodash')
+var convert=require('koa-convert')
 
 // var Schema = mongoose.Schema;
 // var Category=mongoose.model('Category',new Schema({ name: String }))
@@ -16,7 +17,7 @@ var _lodash=require('lodash')
 // module.exports = Category;
 
 //index page
-exports.findAll=function*(){
+exports.findAll=convert(function*(){
     var categories=yield Category
         .find({})
         .populate({
@@ -27,10 +28,10 @@ exports.findAll=function*(){
         .exec()
 
     return categories
-}
+})
 
 //search page
-exports.searchByCategory=function*(catId){
+exports.searchByCategory=convert(function*(catId){
     var categories=yield Category
         .find({_id:catId})
         .populate({
@@ -40,17 +41,17 @@ exports.searchByCategory=function*(catId){
         .exec()
 
     return categories
-}
+})
 
-exports.searchByName=function*(q){
+exports.searchByName=convert(function*(q){
     var movies=yield Movie
         .find({title:new RegExp(q+'.*','i')})
         .exec()
 
     return movies
-}
+})
 
-exports.findHotMovies=function*(hot,count){
+exports.findHotMovies=convert(function*(hot,count){
     var movies=yield Movie
         .find({})
         .sort({'pv':hot})
@@ -58,9 +59,9 @@ exports.findHotMovies=function*(hot,count){
         .exec()
 
     return movies
-}
+})
 
-exports.findMoviesByCate=function*(cat){
+exports.findMoviesByCate=convert(function*(cat){
     var category=yield Category
         .findOne({name:cat})
         .populate({
@@ -70,15 +71,15 @@ exports.findMoviesByCate=function*(cat){
         .exec()
 
     return category
-}
+})
 
-exports.searchById=function*(id){
+exports.searchById=convert(function*(id){
     var movies=yield Movie
         .findOne({_id:id})
         .exec()
 
     return movies
-}
+})
 
 function updateMovies(movie) {
     var options={
@@ -129,7 +130,7 @@ function updateMovies(movie) {
     })
 }
 
-exports.searchByDouban=function*(q){
+exports.searchByDouban=convert(function*(q){
     var options={
         url:'https://api.douban.com/v2/movie/search?q='
     }
@@ -181,5 +182,5 @@ exports.searchByDouban=function*(q){
         })
     }
     return movies
-}
+})
 

@@ -2,27 +2,28 @@
 
 var fs=require('fs')//引入fs模块
 var Promise=require('bluebird')
+var convert=require('koa-convert')
 
 
 //读文件
-exports.readFileAsync=function(fpath,encoding){//暴露readFileAsync方法
+exports.readFileAsync=convert(function(fpath,encoding){//暴露readFileAsync方法
     return new Promise(function(resolve,reject){
         fs.readFile(fpath,encoding,function(err,content){
             if(err) reject(err)//异常
             else resolve(content)
         })
     })
-}
+})
 
 //写文件
-exports.writeFileAsync=function(fpath,content){//暴露readFileAsync方法
+exports.writeFileAsync=convert(function(fpath,content){//暴露readFileAsync方法
     return new Promise(function(resolve,reject){
         fs.writeFile(fpath,content,function(err,content){
             if(err) reject(err)//异常
             else resolve()
         })
     })
-}
+})
 
 var crypto = require('crypto')
 
@@ -49,7 +50,7 @@ var _sign = function(noncestr, ticket, timestamp, url){
     return shasum.digest('hex')
 }
 
-exports.sign=function(ticket, url){//生成签名的方法
+exports.sign=convert(function(ticket, url){//生成签名的方法
     var noncestr = createNonce()
     var timestamp = createTimestamp()
     var signature = _sign(noncestr, ticket, timestamp, url)
@@ -59,4 +60,4 @@ exports.sign=function(ticket, url){//生成签名的方法
         timestamp: timestamp,
         signature: signature
     }
-}
+})

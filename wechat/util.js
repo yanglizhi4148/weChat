@@ -3,15 +3,16 @@
 var xml2js=require('xml2js')
 var Promise=require('bluebird')
 var tpl=require('./tpl')
+var convert=require('koa-convert')
 
-exports.parseXMLAsync=function(xml){//导出parseXMLAsync
+exports.parseXMLAsync=convert(function(xml){//导出parseXMLAsync
     return new Promise(function(resolve,reject){
         xml2js.parseString(xml,{trim:true},function(err,content){
             if(err) reject(err)
             else resolve(content)
         })
     })
-}
+})
 
 function formatMessage(result){
     var message={}
@@ -51,7 +52,7 @@ function formatMessage(result){
 
 exports.formatMessage=formatMessage //把 message 对象进一步格式化出来
 
-exports.tpl=function(content,message){
+exports.tpl=convert(function(content,message){
     var info={}//临时存储回复的内容
     var type='text'//默认的类型
     var fromUserName=message.FromUserName
@@ -70,4 +71,4 @@ exports.tpl=function(content,message){
     info.fromUserName=toUserName
 
     return tpl.compiled(info)
-}
+})

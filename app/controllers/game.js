@@ -7,8 +7,9 @@ var wx=require('../../wx/index')
 var util=require('../../libs/util')
 var Movie=require('../api/movie')
 var koa_request=require('koa-request')
+var convert=require('koa-convert')
 
-exports.guess=function *(next){//暴露方法，提供后面中间件的处理
+exports.guess=convert(function *(next){//暴露方法，提供后面中间件的处理
     var wechatApi=wx.getWechat()
     var data = yield wechatApi.fetchAccessToken()
     var access_token = data.access_token
@@ -19,9 +20,9 @@ exports.guess=function *(next){//暴露方法，提供后面中间件的处理
 
     console.log(params);
     yield this.render('wechat/game',params)
-}
+})
 
-exports.jump=function *(next) {
+exports.jump=convert(function *(next) {
     var movieId=this.params.id
     var redirect='http://116.196.67.60/wechat/movie/'+movieId
     var url='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+
@@ -30,9 +31,9 @@ exports.jump=function *(next) {
             '#wechat_redirect'
 
     this.redirect(url)
-}
+})
 
-exports.find=function *(next){//暴露方法，提供后面中间件的处理
+exports.find=convert(function *(next){//暴露方法，提供后面中间件的处理
     var code=this.query.code
 
     var openUrl='https://api.weixin.qq.com/sns/oauth2/access_token?appid='+
@@ -79,5 +80,5 @@ exports.find=function *(next){//暴露方法，提供后面中间件的处理
     params.comments=comments
 
     yield this.render('wechat/game',params)
-}
+})
 

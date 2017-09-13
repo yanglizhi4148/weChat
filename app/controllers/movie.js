@@ -6,9 +6,10 @@ var Comment = mongoose.model('Comment')
 var _ = require('lodash')
 var fs = require('fs')
 var path = require('path')
+var convert=require('koa-convert')
 
 // detail page
-exports.detail = function *(next) {
+exports.detail = convert(function *(next) {
     var id = this.params.id
 
     yield Movie.update({_id: id}, {$inc: {pv: 1}}).exec()
@@ -25,10 +26,10 @@ exports.detail = function *(next) {
         movie: movie,
         comments: comments
     })
-}
+})
 
 // admin new page
-exports.new = function *(next) {
+exports.new = convert(function *(next) {
     var categories = yield Category.find({}).exec()
 
     yield this.render('pages/admin', {
@@ -36,10 +37,10 @@ exports.new = function *(next) {
         categories: categories,
         movie: {}
     })
-}
+})
 
 // admin update page
-exports.update = function *(next) {
+exports.update = convert(function *(next) {
     var id = this.params.id
 
     if (id) {
@@ -51,12 +52,12 @@ exports.update = function *(next) {
             categories: categories
         })
     }
-}
+})
 
 var util = require('../../libs/util')
 
 // admin poster
-exports.savePoster = function *(next) {
+exports.savePoster = convert(function *(next) {
     var posterData = this.request.body.files.uploadPoster
     var filePath = posterData.path
     var name = posterData.name
@@ -73,10 +74,10 @@ exports.savePoster = function *(next) {
         this.poster=poster
     }
     yield next
-}
+})
 
 // admin post movie
-exports.save = function *(next) {
+exports.save = convert(function *(next) {
     var movieObj = this.request.body.files || {}
 
     var _movie
@@ -123,10 +124,10 @@ exports.save = function *(next) {
             this.redirect('/movie/' + movie._id)
         }
     }
-}
+})
 
 // list page
-exports.list = function *(next) {
+exports.list = convert(function *(next) {
     var movies = yield Movie.find({})
         .populate('category', 'name')
         .exec()
@@ -136,10 +137,10 @@ exports.list = function *(next) {
         movies: movies
     })
 
-}
+})
 
 // list page
-exports.del = function *(next) {
+exports.del = convert(function *(next) {
     var id = this.query.id
 
     if (id) {
@@ -151,4 +152,4 @@ exports.del = function *(next) {
             this.body = {success: 0}
         }
     }
-}
+})

@@ -1,18 +1,19 @@
 'use strict'
 
 var Movie=require('../api/movie')
+var convert=require('koa-convert')
 //index page
-exports.index=function *(next){
+exports.index=convert(function *(next){
     var categories=yield Movie.findAll()
 
     yield this.render('pages/index',{
         title:'imooc 首页',
         categories:categories
     })
-}
+})
 
 //search page
-exports.search=function *(next){
+exports.search=convert(function *(next){
     var catId=this.query.cat
     var q=this.query.q
     var page=parseInt(this.query.p,10)||0
@@ -47,4 +48,4 @@ exports.search=function *(next){
             movies:results
         })
     }
-}
+})

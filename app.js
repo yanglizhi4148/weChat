@@ -46,6 +46,7 @@ var app=new Koa()
 var Router=require('koa-router')
 var session=require('koa-session')
 var bodyParser=require('koa-bodyparser')
+var convert=require('koa-convert')
 var router=new Router()
 // var game=require('./app/controllers/game')
 // var wechat=require('./app/controllers/wechat')
@@ -65,7 +66,7 @@ app.use(session(app))
 
 app.use(bodyParser())
 
-app.use(function *(next){
+app.use(convert(function *(next){
     var user=this.session.user
 
     if(user && user._id){//user有没有挂载在session上，同时是合法的
@@ -76,7 +77,7 @@ app.use(function *(next){
         this.state.user=null
     }
     yield next
-})
+}))
 
 require('./config/routes')(router)
 

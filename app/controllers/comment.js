@@ -2,9 +2,10 @@
 
 var mongoose = require('mongoose')
 var Comment = mongoose.model('Comment')
+var convert=require('koa-convert')
 
 // comment
-exports.save = function *(next) {
+exports.save = convert(function *(next) {
     var _comment = this.request.body.comment
     var movieId = _comment.movie
 
@@ -32,4 +33,4 @@ exports.save = function *(next) {
         yield comment.save()
         this.body={success:1}
     }
-}
+})

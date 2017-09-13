@@ -3,6 +3,7 @@
 // var path=require('path')
 // var wx=require('../wx/index')
 var Movie=require('../app/api/movie')
+var convert=require('koa-convert')
 // var wechatApi=wx.getWechat()
 var help='欢迎关注科幻电影世界\n'+
     '回复 1~6，测试文字回复\n'+

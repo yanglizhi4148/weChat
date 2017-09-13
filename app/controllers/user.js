@@ -2,21 +2,22 @@
 
 var mongoose = require('mongoose')
 var User = mongoose.model('User')
+var convert=require('koa-convert')
 
 // signup
-exports.showSignup = function *(next) {
+exports.showSignup = convert(function *(next) {
     yield this.render('pages/signup', {
         title: '注册页面'
     })
-}
+})
 
-exports.showSignin = function *(next) {
+exports.showSignin = convert(function *(next) {
     yield this.render('pages/signin', {
         title: '登录页面'
     })
-}
+})
 
-exports.signup = function *(next) {
+exports.signup = convert(function *(next) {
     var _user = this.request.body.user
 
     var user = yield User.findOne({name: _user.name}).exec()
@@ -35,10 +36,10 @@ exports.signup = function *(next) {
 
     }
 
-}
+})
 
 // signin
-exports.signin = function *(next) {
+exports.signin = convert(function *(next) {
     var _user = this.request.body.user
     var name = _user.name
     var password = _user.password
@@ -62,18 +63,18 @@ exports.signin = function *(next) {
         this.redirect('/signin')
     }
 
-}
+})
 
 // logout
-exports.logout = function *(next) {
+exports.logout = convert(function *(next) {
     delete this.session.user
     //delete app.locals.user
 
     this.redirect('/')
-}
+})
 
 // userlist page
-exports.list = function *(next) {
+exports.list = convert(function *(next) {
     var users = yield User
         .find({})
         .sort('meta.updateAt')
@@ -84,10 +85,10 @@ exports.list = function *(next) {
         users: users
     })
 
-}
+})
 
 // midware for user
-exports.signinRequired = function *(next) {
+exports.signinRequired = convert(function *(next) {
     var user = this.session.user
 
     if (!user) {
@@ -97,9 +98,9 @@ exports.signinRequired = function *(next) {
         yield next
 
     }
-}
+})
 
-exports.adminRequired = function *(next) {
+exports.adminRequired = convert(function *(next) {
     var user = this.session.user
 
     if (user.role <= 10) {
@@ -108,4 +109,4 @@ exports.adminRequired = function *(next) {
     else {
         yield next
     }
-}
+})
