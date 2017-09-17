@@ -43,15 +43,15 @@ wechatApi.deleteMenu().then(function(){
     })
 
 var app=new Koa()
-var Router=require('koa-router')
+var Router=require('koa-router')//引入路由模块
 var session=require('koa-session')
 var bodyParser=require('koa-bodyparser')
 var convert=require('koa-convert')
-var router=new Router()
+var router=new Router()//拿到路由实例
 // var game=require('./app/controllers/game')
 // var wechat=require('./app/controllers/wechat')
 var User=mongoose.model('User')//User是数据库模型
-var views=require('koa-views')
+var views=require('koa-views')//增加jade
 var moment=require('moment')
 
 app.use(views(__dirname+'/app/views',{

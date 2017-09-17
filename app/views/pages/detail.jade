@@ -63,17 +63,17 @@ block content
                     dt 简介
                     dd= movie.summary
     script.
-        $(function(){
-            $('.comment').click(function(e){
-                var target=$(this)
-                var toId=target.data('tid')
-                var commentId=target.data('cid')
+        $(function () {
+            $('.comment').click(function (e) {
+                var target = $(this)
+                var toId = target.data('tid')
+                var commentId = target.data('cid')
 
                 $('#toId').val(toId)
                 $('#commentId').val(commentId)
             })
 
-            $('#submit').click(function(e){
+            $('#submit').click(function (e) {
                 e.preventDefault()
                 $.ajax({
                     type: 'POST',

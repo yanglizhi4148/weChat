@@ -24,7 +24,7 @@ var CommentSchema = new mongoose.Schema({
 })
 
 // var ObjectId = mongoose.Schema.Types.ObjectId
-CommentSchema.pre('save', function(next) {
+CommentSchema.pre('save', function (next) {
     if (this.isNew) {
         this.meta.createAt = this.meta.updateAt = Date.now()
     }
@@ -36,13 +36,13 @@ CommentSchema.pre('save', function(next) {
 })
 
 CommentSchema.statics = {
-    fetch: function(cb) {
+    fetch: function (cb) {
         return this
             .find({})
             .sort('meta.updateAt')
             .exec(cb)
     },
-    findById: function(id, cb) {
+    findById: function (id, cb) {
         return this
             .findOne({_id: id})
             .exec(cb)

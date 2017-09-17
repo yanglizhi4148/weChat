@@ -2,7 +2,7 @@
 
 var mongoose = require('mongoose')
 var User = mongoose.model('User')
-var convert=require('koa-convert')
+var convert = require('koa-convert')
 
 // signup
 exports.showSignup = convert(function *(next) {
@@ -31,7 +31,7 @@ exports.signup = convert(function *(next) {
         user = new User(_user)
         yield user.save()
 
-        this.session.user=user
+        this.session.user = user
         this.redirect('/')
 
     }
@@ -52,7 +52,7 @@ exports.signin = convert(function *(next) {
         return next
     }
 
-    var isMatch = yield user.comparePassword(password,user.password)
+    var isMatch = yield user.comparePassword(password, user.password)
 
     if (isMatch) {
         this.session.user = user
@@ -81,7 +81,7 @@ exports.list = convert(function *(next) {
         .exec()
 
     yield this.render('userlist', {
-        title: 'imooc 用户列表页',
+        title: 'Movie 用户列表页',
         users: users
     })
 

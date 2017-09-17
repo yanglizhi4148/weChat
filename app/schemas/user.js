@@ -11,7 +11,7 @@ var UserSchema = new mongoose.Schema({
         unique: true,
         type: String
     },
-    openid:String,
+    openid: String,
     password: String,
     // 0: nomal user
     // 1: verified user
@@ -34,7 +34,7 @@ var UserSchema = new mongoose.Schema({
     }
 })
 
-UserSchema.pre('save', function(next) {
+UserSchema.pre('save', function (next) {
     var user = this
 
     if (this.isNew) {
@@ -44,10 +44,10 @@ UserSchema.pre('save', function(next) {
         this.meta.updateAt = Date.now()
     }
 
-    bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+    bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
         if (err) return next(err)
 
-        bcrypt.hash(user.password, salt, function(err, hash) {
+        bcrypt.hash(user.password, salt, function (err, hash) {
             if (err) return next(err)
 
             user.password = hash
@@ -57,10 +57,10 @@ UserSchema.pre('save', function(next) {
 })
 
 UserSchema.methods = {
-    comparePassword: function(_password,password) {
+    comparePassword: function (_password, password) {
         // var password=this.password
-        return function(cb){
-            bcrypt.compare(_password, password, function(err, isMatch) {
+        return function (cb) {
+            bcrypt.compare(_password, password, function (err, isMatch) {
                 cb(err, isMatch)
             })
         }
@@ -69,13 +69,13 @@ UserSchema.methods = {
 }
 
 UserSchema.statics = {
-    fetch: function(cb) {
+    fetch: function (cb) {
         return this
             .find({})
             .sort('meta.updateAt')
             .exec(cb)
     },
-    findById: function(id, cb) {
+    findById: function (id, cb) {
         return this
             .findOne({_id: id})
             .exec(cb)

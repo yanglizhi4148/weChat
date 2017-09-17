@@ -13,46 +13,59 @@ block content
             font-weight: 400;
             margin: 0 15%;
         }
-        img{
+
+        img {
             vertical-align: middle;
         }
-        p{
+
+        p {
             margin: 0 0 10px;
         }
+
         .media-list {
-            padding-left:0;
+            padding-left: 0;
             list-style: none;
         }
-        .media-object{
+
+        .media-object {
             display: block;
         }
-        .pull-left{
-            float:  left !important;
+
+        .pull-left {
+            float: left !important;
         }
-        .media{
-            margin-top:15px;
+
+        .media {
+            margin-top: 15px;
         }
-        .media, .media-body{
+
+        .media, .media-body {
             overflow: hidden;
             zoom: 1;
         }
-        .media:first-child{
-            margin-top:0;
+
+        .media:first-child {
+            margin-top: 0;
         }
-        .media-left, .media>.pull-left{
-            padding-right:10px;
+
+        .media-left, .media > .pull-left {
+            padding-right: 10px;
         }
-        .media-body{
-            width:10000px;
+
+        .media-body {
+            width: 10000px;
         }
-        .media-body, .media-left, .media-right{
+
+        .media-body, .media-left, .media-right {
             display: table-cell;
             vertical-align: top;
         }
-        .h4, h4{
+
+        .h4, h4 {
             font-size: 18px;
         }
-        .media-heading{
+
+        .media-heading {
             margin-top: 0;
             margin-bottom: 5px;
         }
@@ -137,16 +150,16 @@ block content
                 $.ajax({
                     type: 'POST',
                     data: {
-                        comment:{
-                            movie:$('#movie').val(),
-                            from:$('#from').val(),
-                            tid:$('#toId').val(),
-                            cid:$('#commentId').val(),
-                            content:$('#content').val()
+                        comment: {
+                            movie: $('#movie').val(),
+                            from: $('#from').val(),
+                            tid: $('#toId').val(),
+                            cid: $('#commentId').val(),
+                            content: $('#content').val()
                         }
                     },
                     url: '/user/comment',
-                    success:function (results) {
+                    success: function (results) {
                         if (results.success === 1) {
                             window.location.reload()
                         }

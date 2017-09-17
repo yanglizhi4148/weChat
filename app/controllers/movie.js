@@ -6,7 +6,7 @@ var Comment = mongoose.model('Comment')
 var _ = require('lodash')
 var fs = require('fs')
 var path = require('path')
-var convert=require('koa-convert')
+var convert = require('koa-convert')
 
 // detail page
 exports.detail = convert(function *(next) {
@@ -22,7 +22,7 @@ exports.detail = convert(function *(next) {
         .exec()
 
     yield this.render('pages/detail', {
-        title: 'imooc 详情页',
+        title: 'Movie 详情页',
         movie: movie,
         comments: comments
     })
@@ -33,7 +33,7 @@ exports.new = convert(function *(next) {
     var categories = yield Category.find({}).exec()
 
     yield this.render('pages/admin', {
-        title: 'imooc 后台录入页',
+        title: 'Movie 后台录入页',
         categories: categories,
         movie: {}
     })
@@ -47,7 +47,7 @@ exports.update = convert(function *(next) {
         var movie = yield Movie.findOne({_id: id}).exec()
         var categories = yield Category.find({}).exec()
         yield this.render('pages/admin', {
-            title: 'imooc 后台更新页',
+            title: 'Movie 后台更新页',
             movie: movie,
             categories: categories
         })
@@ -70,8 +70,8 @@ exports.savePoster = convert(function *(next) {
         var poster = timestamp + '.' + type
         var newPath = path.join(__dirname, '../../', '/public/upload/' + poster)
 
-        yield util.writeFileAsync(newPath,data)
-        this.poster=poster
+        yield util.writeFileAsync(newPath, data)
+        this.poster = poster
     }
     yield next
 })
@@ -133,7 +133,7 @@ exports.list = convert(function *(next) {
         .exec()
 
     yield this.render('pages/list', {
-        title: 'imooc 列表页',
+        title: 'Movie 列表页',
         movies: movies
     })
 

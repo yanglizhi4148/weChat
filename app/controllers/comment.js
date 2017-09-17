@@ -2,7 +2,7 @@
 
 var mongoose = require('mongoose')
 var Comment = mongoose.model('Comment')
-var convert=require('koa-convert')
+var convert = require('koa-convert')
 
 // comment
 exports.save = convert(function *(next) {
@@ -20,17 +20,17 @@ exports.save = convert(function *(next) {
         comment.reply.push(reply)
 
         yield comment.save()
-        this.body={success:1}
+        this.body = {success: 1}
 
     }
     else {
         let comment = new Comment({
-            movie:_comment.movie,
-            from:_comment.from,
-            content:_comment.content
+            movie: _comment.movie,
+            from: _comment.from,
+            content: _comment.content
         })
 
         yield comment.save()
-        this.body={success:1}
+        this.body = {success: 1}
     }
 })
