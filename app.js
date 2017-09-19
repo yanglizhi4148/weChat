@@ -1,14 +1,14 @@
+/**
+ * Created by Lizhi Yang(njalizhi@163.com)
+ */
+
 'use strict'
 
 var Koa=require('koa')
 var fs=require('fs')
-// var path=require('path')
 var mongoose=require('mongoose')
-// var wechat=require('./wechat/g')
-// var reply=require('./wx/reply')
-var dbUrl='mongodb://127.0.0.1:27017/test'
-
-mongoose.connect(dbUrl,{useMongoClient: true});
+var{dbUri,dbOptions}=require('./config/db')
+mongoose.connect(dbUri,dbOptions)
 
 //models loading
 var models_path=__dirname+'/app/models'
@@ -48,8 +48,6 @@ var session=require('koa-session')
 var bodyParser=require('koa-bodyparser')
 var convert=require('koa-convert')
 var router=new Router()//拿到路由实例
-// var game=require('./app/controllers/game')
-// var wechat=require('./app/controllers/wechat')
 var User=mongoose.model('User')//User是数据库模型
 var views=require('koa-views')//增加jade
 var moment=require('moment')
@@ -84,10 +82,8 @@ require('./config/routes')(router)
 app.use(router.routes())
     .use(router.allowedMethods())
 
-// app.use(wechat(wx.wechatOptions.wechat,reply.reply))
-
-app.listen(1234)
-console.log('Listening:1234');
+app.listen(80)
+console.log('Listening:80');
 
 
 

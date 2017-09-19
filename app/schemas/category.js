@@ -1,3 +1,9 @@
+/**
+ * Created by Lizhi.Yang <njalizhi@163.com>
+ */
+
+'use strict'
+
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 var ObjectId = Schema.Types.ObjectId

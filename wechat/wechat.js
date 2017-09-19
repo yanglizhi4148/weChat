@@ -1,3 +1,7 @@
+/**
+ * Created by Lizhi.Yang <njalizhi@163.com>
+ */
+
 'use strict'
 
 var Promise = require('bluebird')

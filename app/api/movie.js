@@ -1,3 +1,7 @@
+/**
+ * Created by Lizhi.Yang <njalizhi@163.com>
+ */
+
 'use strict'
 
 var mongoose = require('mongoose')
@@ -153,9 +157,6 @@ exports.searchByDouban = function*(q) {
         subjects = data.subjects
     }
 
-    // console.log("data.subjects:"+data.subjects);
-
-    // console.log("subjects:"+subjects);
 
     if (subjects.length > 0) {
         var queryArray = []

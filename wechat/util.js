@@ -1,3 +1,7 @@
+/**
+ * Created by Lizhi.Yang <njalizhi@163.com>
+ */
+
 'use strict'
 
 var xml2js = require('xml2js')

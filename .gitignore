@@ -4,3 +4,5 @@ config/wechat.txt
 config/wechat_ticket.txt
 package-lock.json
 .idea/workspace.xml
+config/app.js
+config/db.js

@@ -1,3 +1,9 @@
+/**
+ * Created by Lizhi.Yang <njalizhi@163.com>
+ */
+
+'use strict'
+
 var mongoose = require('mongoose')
 var CommentSchema = require('../schemas/comment')
 var Comment = mongoose.model('Comment', CommentSchema)

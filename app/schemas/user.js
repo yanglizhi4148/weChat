@@ -1,9 +1,11 @@
+/**
+ * Created by Lizhi.Yang <njalizhi@163.com>
+ */
+
 'use strict'
 
 var mongoose = require('mongoose')
-// var bcrypt = require('bcrypt')
 var bcrypt = require('bcryptjs')
-// var bcrypt = require('bcrypt-nodejs')
 var SALT_WORK_FACTOR = 10
 
 var UserSchema = new mongoose.Schema({
@@ -13,11 +15,6 @@ var UserSchema = new mongoose.Schema({
     },
     openid: String,
     password: String,
-    // 0: nomal user
-    // 1: verified user
-    // 2: professonal user
-    // >10: admin
-    // >50: super admin
     role: {
         type: Number,
         default: 0

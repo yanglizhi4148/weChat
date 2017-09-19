@@ -1,3 +1,7 @@
+/**
+ * Created by Lizhi.Yang <njalizhi@163.com>
+ */
+
 'use strict'
 
 var mongoose = require('mongoose')
@@ -25,10 +29,10 @@ exports.guess = convert(function *(next) {//暴露方法，提供后面中间件
 exports.jump = convert(function *(next) {
     var movieId = this.params.id
     var redirect = config.app.host + '/wechat/movie/' + movieId
-    var url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' +
-        wx.wechatOptions.wechat.appID + '&redirect_url=' + redirect +
-        '&response_type=code&scope=snsapi_base&state=' + movieId +
-        '#wechat_redirect'
+
+    //使用反引号
+    //URL中不能回车，空格
+    var url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${wx.wechatOptions.wechat.appID}&redirect_uri=${redirect}&response_type=code&scope=snsapi_base&state=${movieId}#wechat_redirect`
 
     this.redirect(url)
 })
@@ -79,6 +83,6 @@ exports.find = convert(function *(next) {//暴露方法，提供后面中间件�
     params.movie = movie
     params.comments = comments
 
-    yield this.render('wechat/game', params)
+    yield this.render('wechat/movie', params)
 })
 

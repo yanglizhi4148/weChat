@@ -1,9 +1,12 @@
+/**
+ * Created by Lizhi.Yang <njalizhi@163.com>
+ */
+
 'use strict'
 
 var fs = require('fs')//引入fs模块
 var Promise = require('bluebird')
 var convert = require('koa-convert')
-
 
 //读文件
 exports.readFileAsync = convert(function (fpath, encoding) {//暴露readFileAsync方法
