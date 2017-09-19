@@ -5,11 +5,11 @@
 'use strict'
 
 var config = {
-    host: '',
+    host: '127.0.0.1',
     port: 27017,
     user: null,
     pass: null,
-    database: '',
+    database: 'test',
 }
 
 module.exports = {
