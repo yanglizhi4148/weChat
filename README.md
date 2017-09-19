@@ -5,8 +5,8 @@
 4. 项目基于Node.js的Koa1框架以及微信JS-SDK进行电影公众号开发，使用MongoDB进行数据存储，运用jade模板引擎完成页面创建渲染。
 
 ## Requirement
--Node.js>=7.0
--MongoDB
+1. Node.js>=7.0
+2. MongoDB
 
 ## Installation
 1. `git clone xxxx`
