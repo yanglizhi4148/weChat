@@ -12,7 +12,8 @@ var util = require('../../libs/util')
 var Movie = require('../api/movie')
 var koa_request = require('koa-request')
 var convert = require('koa-convert')
-var config = require('../../config/app')
+var {host} = require('../../config/app')
+
 exports.guess = convert(function *(next) {//暴露方法，提供后面中间件的处理
     var wechatApi = wx.getWechat()
     var data = yield wechatApi.fetchAccessToken()
@@ -28,7 +29,7 @@ exports.guess = convert(function *(next) {//暴露方法，提供后面中间件
 
 exports.jump = convert(function *(next) {
     var movieId = this.params.id
-    var redirect = config.app.host + '/wechat/movie/' + movieId
+    var redirect = host + '/wechat/movie/' + movieId
 
     //使用反引号
     //URL中不能回车，空格

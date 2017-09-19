@@ -5,17 +5,11 @@
 'use strict'
 var Koa = require('koa')
 var sha1 = require('sha1')
-var config = {
-    wechat: {
-        appID: '',
-        appSecret: '',
-        token: ''
-    }
-}
+var {listenHost, listenPort, wechat} = require('./config/app')
 var app = new Koa()
 app.use(function*(next) {
     console.log(this.query)
-    var token = config.wechat.token
+    var token = wechat.token
     var signature = this.query.signature
     var nonce = this.query.nonce
     var timestamp = this.query.timestamp
@@ -30,5 +24,5 @@ app.use(function*(next) {
     }
 })
 
-app.listen(80)
-console.log('Listening:80')
+app.listen ( listenPort , listenHost )
+console.log( `Listening :${listenHost}:${listenPort}`)

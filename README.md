@@ -9,10 +9,10 @@
 2. MongoDB
 
 ## Installation
-1. `git clone xxxx`
+1. `git clone https://github.com/yanglizhi4148/weChat`
 2. `cd weChat`
 3. `npm install`
-4. 配置微信appID、appSecret、token
+4. 把config/app.default.js拷贝为config/app.js并在里面配置微信appID、appSecret、token、host
 5. `node test.js`
 6. 在微信公众平台上面配置服务器
 7. 配置成功之后就可以`npm start`

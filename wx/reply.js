@@ -6,14 +6,15 @@
 
 var Movie = require('../app/api/movie')
 var convert = require('koa-convert')
-var config = require('../config/app')
+var {host, wechat} = require('../config/app')
+
 var help = `欢迎关注科幻电影世界
     回复 1~6，测试文字回复
     回复 7，测试图文回复
     回复 首页，进入电影首页
     回复 电影名字，查询电影信息
     回复 语音，查询电影信息
-    也可以点击 <a href="${config.app.host}/wechat/movie">语音查电影</a>`
+    也可以点击 <a href="${host}/wechat/movie">语音查电影</a>`
 
 exports.reply = function*(next) {
     var message = this.weixin
@@ -39,7 +40,7 @@ exports.reply = function*(next) {
                         title: movie.title,
                         description: movie.title,
                         picUrl: movie.poster,
-                        url: config.app.host + '/wechat/jump/' + movie._id
+                        url: host + '/wechat/jump/' + movie._id
                     })
                 })
             }
@@ -51,7 +52,7 @@ exports.reply = function*(next) {
                         title: movie.title,
                         description: movie.title,
                         picUrl: movie.poster,
-                        url: config.app.host + '/wechat/jump/' + movie._id
+                        url: host + '/wechat/jump/' + movie._id
                     })
                 })
             }
@@ -62,7 +63,7 @@ exports.reply = function*(next) {
                         title: movie.title,
                         description: movie.title,
                         picUrl: movie.poster,
-                        url: config.app.host + '/wechat/jump/' + movie._id
+                        url: host + '/wechat/jump/' + movie._id
                     })
                     news = news.slice(0, 5)
                 })
@@ -73,7 +74,7 @@ exports.reply = function*(next) {
                         title: movie.title,
                         description: movie.title,
                         picUrl: movie.poster,
-                        url: config.app.host + '/wechat/jump/' + movie._id
+                        url: host + '/wechat/jump/' + movie._id
                     })
                 })
                 news = news.slice(0, 5)
@@ -104,7 +105,7 @@ exports.reply = function*(next) {
                     title: movie.title,
                     description: movie.title,
                     picUrl: movie.poster,
-                    url: config.app.host + '/wechat/jump/' + movie._id
+                    url: host + '/wechat/jump/' + movie._id
                 })
             })
         } else {//没有数据
@@ -165,7 +166,7 @@ exports.reply = function*(next) {
                         title: movie.title,
                         description: movie.title,
                         picUrl: movie.poster,
-                        url: config.app.host + '/wechat/jump/' + movie._id
+                        url: host + '/wechat/jump/' + movie._id
                     })
                 })
             } else {//没有数据

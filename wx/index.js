@@ -8,7 +8,8 @@ var path = require('path')
 var util = require('../libs/util')
 var Wechat = require('../wechat/wechat')
 var convert = require('koa-convert')
-var config = require('../config/app')
+var { wechat} = require('../config/app')
+
 //定义一个文本文件
 var wechat_file = path.join(__dirname, '../config/wechat.txt')
 var wechat_ticket_file = path.join(__dirname, '../config/wechat_ticket.txt')
@@ -16,9 +17,9 @@ var wechat_ticket_file = path.join(__dirname, '../config/wechat_ticket.txt')
 
 var config = {
     wechat: {
-        appID: config.app.wechat.appID,
-        appSecret: config.app.wechat.appSecret,
-        token: config.app.wechat.token,
+        appID: wechat.appID,
+        appSecret: wechat.appSecret,
+        token: wechat.token,
         getAccessToken: function () {
             return util.readFileAsync(wechat_file)//return一个promise
         },

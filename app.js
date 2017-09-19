@@ -9,6 +9,7 @@ var fs=require('fs')
 var mongoose=require('mongoose')
 var{dbUri,dbOptions}=require('./config/db')
 mongoose.connect(dbUri,dbOptions)
+var {listenHost, listenPort} = require('./config/app')
 
 //models loading
 var models_path=__dirname+'/app/models'
@@ -82,8 +83,8 @@ require('./config/routes')(router)
 app.use(router.routes())
     .use(router.allowedMethods())
 
-app.listen(80)
-console.log('Listening:80');
+app.listen(listenPort,listenHost)
+console.log(`Listening:${listenHost}:${listenPort}`)
 
 
 
